@@ -33,6 +33,7 @@ export default function AvatarWidget() {
 
   const closeWindow = () => {
     setIsExpanded(false);
+    avatar?.current?.closeVoiceChat();
     endSession();
   };
 
@@ -99,6 +100,10 @@ export default function AvatarWidget() {
       avatar.current?.on(StreamingEvents.USER_STOP, (event) => {
         console.log(">>>>> User stopped talking:", event);
       });
+      avatar.current?.on(StreamingEvents.USER_TALKING_MESSAGE, (message) => {
+        console.log("User talking message:", message);
+        // Handle the user's message input to the avatar
+      });
     });
 
     try {
@@ -135,7 +140,6 @@ export default function AvatarWidget() {
     //   });
 
     await avatar.current?.startVoiceChat();
-    await avatar.current?.startListening();
   }
 
   async function endSession() {
