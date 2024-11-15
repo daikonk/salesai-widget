@@ -78,6 +78,27 @@ export default function AvatarWidget() {
       setTimeout(function () {
         handleSpeak();
       }, 1000);
+
+      avatar.current.on(StreamingEvents.AVATAR_START_TALKING, (e) => {
+        console.log("Avatar started talking", e);
+      });
+      avatar.current.on(StreamingEvents.AVATAR_STOP_TALKING, (e) => {
+        console.log("Avatar stopped talking", e);
+      });
+      avatar.current.on(StreamingEvents.STREAM_DISCONNECTED, () => {
+        console.log("Stream disconnected");
+        endSession();
+      });
+      avatar.current?.on(StreamingEvents.STREAM_READY, (event) => {
+        console.log(">>>>> Stream ready:", event.detail);
+        setStream(event.detail);
+      });
+      avatar.current?.on(StreamingEvents.USER_START, (event) => {
+        console.log(">>>>> User started talking:", event);
+      });
+      avatar.current?.on(StreamingEvents.USER_STOP, (event) => {
+        console.log(">>>>> User stopped talking:", event);
+      });
     });
 
     try {
@@ -103,15 +124,18 @@ export default function AvatarWidget() {
 
       return;
     }
-    await avatar.current
-      .speak({
-        text: "hello I am an assistant",
-        taskType: TaskType.REPEAT,
-        taskMode: TaskMode.SYNC,
-      })
-      .catch((e) => {
-        console.log(e.message);
-      });
+    // await avatar.current
+    //   .speak({
+    //     text: "hello I am an assistant",
+    //     taskType: TaskType.REPEAT,
+    //     taskMode: TaskMode.SYNC,
+    //   })
+    //   .catch((e) => {
+    //     console.log(e.message);
+    //   });
+
+    await avatar.current?.startVoiceChat();
+    await avatar.current?.startListening();
   }
 
   async function endSession() {
